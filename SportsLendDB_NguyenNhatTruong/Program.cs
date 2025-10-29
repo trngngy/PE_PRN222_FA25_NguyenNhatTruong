@@ -56,7 +56,7 @@ namespace SportsLendDB_NguyenNhatTruong
 
             app.MapRazorPages();
 
-            app.MapHub<SignalRHubcs>("/signalRHub");
+            app.MapHub<SignalRHubcs>("/equipmentHub");
 
             app.Run();
         }
