@@ -1,0 +1,84 @@
+﻿@page
+@model SportsLendDB_NguyenNhatTruong.Pages.Equipment.EditModel
+@{
+    ViewData["Title"] = "Edit Equipment";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Edit Equipment</h2>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Equipment ID:</strong> @Model.EquipmentId
+                    </div>
+
+                    <form method="post" asp-route-id="@Model.EquipmentDbId">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Name" class="form-label"></label>
+                            <input asp-for="Input.Name" class="form-control" />
+                            <span asp-validation-for="Input.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Brand" class="form-label"></label>
+                            <input asp-for="Input.Brand" class="form-control" />
+                            <span asp-validation-for="Input.Brand" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.TypeId" class="form-label">Equipment Type</label>
+                            <select asp-for="Input.TypeId" asp-items="Model.EquipmentTypes" class="form-select">
+                                <option value="">-- Select Type --</option>
+                            </select>
+                            <span asp-validation-for="Input.TypeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Condition" class="form-label"></label>
+                            <select asp-for="Input.Condition" asp-items="Model.ConditionList" class="form-select">
+                                <option value="">-- Select Condition --</option>
+                            </select>
+                            <span asp-validation-for="Input.Condition" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.DailyFeeUsd" class="form-label"></label>
+                            <input asp-for="Input.DailyFeeUsd"
+                                   class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   readonly="@Model.IsStaff()"
+                                   disabled="@Model.IsStaff()" />
+                            <span asp-validation-for="Input.DailyFeeUsd" class="text-danger"></span>
+                            @if (Model.IsStaff())
+                            {
+                                <small class="text-muted">Staff cannot change Daily Fee</small>
+                            }
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.InStock" class="form-label"></label>
+                            <input asp-for="Input.InStock" class="form-control" type="number" />
+                            <span asp-validation-for="Input.InStock" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-page="/Equipment/Index" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Update Equipment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
