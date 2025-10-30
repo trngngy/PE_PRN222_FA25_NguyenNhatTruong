@@ -20,6 +20,7 @@ namespace SportsLendDB_NguyenNhatTruong
 
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<EquipmentService>();
+            builder.Services.AddScoped<LoanService>();
 
             builder.Services.AddSignalR();
 
@@ -31,9 +32,6 @@ namespace SportsLendDB_NguyenNhatTruong
                         options.LogoutPath = "/Authetication/Logout";
                         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                         options.SlidingExpiration = false;
-
-                        options.Cookie.IsEssential = true;
-                        options.Cookie.HttpOnly = true;
                     });
 
             var app = builder.Build();

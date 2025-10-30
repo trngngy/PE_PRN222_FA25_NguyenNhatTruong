@@ -9,6 +9,7 @@
         <h1>Equipment List</h1>
         <div>
             <span class="me-3">Welcome, <strong>@User.Identity.Name</strong> (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)</span>
+            <a asp-page="/LoanPage/Index" class="btn btn-info btn-sm me-2">Loan Management</a>
             @if (Model.IsManager())
             {
                 <a asp-page="/Equipment/Create" class="btn btn-success btn-sm me-2">Add New Equipment</a>

@@ -1,0 +1,99 @@
+﻿@page
+@model SportsLendDB_NguyenNhatTruong.Pages.Loan.IndexModel
+@{
+    ViewData["Title"] = "Loan Management";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Loan Management</h1>
+        <div>
+            <a asp-page="/LoanPage/Create" class="btn btn-success btn-sm me-2">Create New Loan</a>
+            <a asp-page="/Equipment/Index" class="btn btn-secondary btn-sm">Back to Equipment</a>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Loans Table -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Member</th>
+                    <th>Equipment</th>
+                    <th>Loan Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Daily Fee</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Loans.Any())
+                {
+                    @foreach (var loan in Model.Loans)
+                    {
+                        <tr>
+                            <td>@loan.LoanId</td>
+                            <td>@loan.Member?.FullName</td>
+                            <td>@loan.Equipment?.EquipmentId - @loan.Equipment?.Name</td>
+                            <td>@loan.LoanDate.ToString("dd/MM/yyyy")</td>
+                            <td>@loan.DueDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (loan.ReturnDate.HasValue)
+                                {
+                                    @loan.ReturnDate.Value.ToString("dd/MM/yyyy")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Not returned</span>
+                                }
+                            </td>
+                            <td>$@loan.DailyFeeUsd.ToString("0.00")</td>
+                            <td>
+                                @if (loan.ReturnDate.HasValue)
+                                {
+                                    <span class="badge bg-success">Returned</span>
+                                }
+                                else if (loan.DueDate < DateOnly.FromDateTime(DateTime.Today))
+                                {
+                                    <span class="badge bg-danger">Overdue</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Active</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!loan.ReturnDate.HasValue)
+                                {
+                                    <a asp-page="/LoanPage/Return" asp-route-id="@loan.LoanId" class="btn btn-primary btn-sm">Process Return</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">No loans found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

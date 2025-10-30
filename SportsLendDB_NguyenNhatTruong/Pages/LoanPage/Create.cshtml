@@ -1,0 +1,103 @@
+﻿@page
+@model SportsLendDB_NguyenNhatTruong.Pages.Loan.CreateModel
+@{
+    ViewData["Title"] = "Create Loan";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Create New Loan</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.MemberId" class="form-label"></label>
+                            <select asp-for="Input.MemberId" asp-items="Model.Members" class="form-select">
+                                <option value="">-- Select Member --</option>
+                            </select>
+                            <span asp-validation-for="Input.MemberId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.EquipmentId" class="form-label"></label>
+                            <select asp-for="Input.EquipmentId" asp-items="Model.AvailableEquipment" class="form-select" id="equipmentSelect">
+                                <option value="">-- Select Equipment --</option>
+                            </select>
+                            <span asp-validation-for="Input.EquipmentId" class="text-danger"></span>
+                            <div id="stockWarning" class="alert alert-danger mt-2" style="display: none;">
+                                Out of stock.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.LoanDate" class="form-label"></label>
+                            <input asp-for="Input.LoanDate" class="form-control" type="date" />
+                            <span asp-validation-for="Input.LoanDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.DueDate" class="form-label"></label>
+                            <input asp-for="Input.DueDate" class="form-control" type="date" />
+                            <span asp-validation-for="Input.DueDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.DailyFeeUsd" class="form-label"></label>
+                            <input asp-for="Input.DailyFeeUsd" class="form-control" type="number" step="0.01" id="dailyFeeInput" />
+                            <span asp-validation-for="Input.DailyFeeUsd" class="text-danger"></span>
+                            <small class="text-muted">This will be auto-filled when you select equipment, but you can edit it.</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-page="/LoanPage/Index" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Create Loan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('equipmentSelect').addEventListener('change', async function () {
+            const equipmentId = this.value;
+            const dailyFeeInput = document.getElementById('dailyFeeInput');
+            const stockWarning = document.getElementById('stockWarning');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (!equipmentId) {
+                dailyFeeInput.value = '';
+                stockWarning.style.display = 'none';
+                submitBtn.disabled = false;
+                return;
+            }
+
+            try {
+                const response = await fetch(`/LoanPage/Create?handler=EquipmentFee&equipmentId=${equipmentId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    dailyFeeInput.value = data.dailyFee.toFixed(2);
+
+                    if (data.inStock <= 0) {
+                        stockWarning.style.display = 'block';
+                        submitBtn.disabled = true;
+                    } else {
+                        stockWarning.style.display = 'none';
+                        submitBtn.disabled = false;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching equipment fee:', error);
+            }
+        });
+    </script>
+}
