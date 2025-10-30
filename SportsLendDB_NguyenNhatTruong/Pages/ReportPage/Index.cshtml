@@ -1,0 +1,151 @@
+﻿@page
+@model SportsLendDB_NguyenNhatTruong.Pages.ReportPage.IndexModel
+@{
+    ViewData["Title"] = "Reports & Statistics";
+}
+
+<div class="container mt-4">
+    <h1>📊 REPORT EXAMPLES</h1>
+    <hr />
+
+    <!-- Section 1: Loans by Month -->
+    <div class="mb-5">
+        <h4 class="mb-3">Loans by Month (@Model.CurrentYear)</h4>
+        <table class="table table-bordered" style="max-width: 600px;">
+            <thead class="table-light">
+                <tr>
+                    <th>Month</th>
+                    <th>TotalLoans</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.LoansByMonth)
+                {
+                    <tr>
+                        <td>@item.Month</td>
+                        <td>@item.TotalLoans</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Chart.js Bar Chart -->
+        <div style="max-width: 600px;">
+            <canvas id="monthChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Section 2: Top Equipment Types -->
+    <div class="mb-5">
+        <h4 class="mb-3">Top Equipment Types</h4>
+
+        <form method="post" class="row g-3 mb-3" style="max-width: 600px;">
+            <div class="col-md-5">
+                <label class="form-label">From Date</label>
+                <input asp-for="FromDate" type="date" class="form-control" />
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">To Date</label>
+                <input asp-for="ToDate" type="date" class="form-control" />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </form>
+
+        <a asp-page-handler="ExportCsv"
+           asp-route-fromDate="@Model.FromDate"
+           asp-route-toDate="@Model.ToDate"
+           class="btn btn-success btn-sm mb-3">Export to CSV</a>
+
+        <table class="table table-bordered" style="max-width: 600px;">
+            <thead class="table-light">
+                <tr>
+                    <th>TypeName</th>
+                    <th>LoanCount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.TopEquipmentTypes)
+                {
+                    <tr>
+                        <td>@item.TypeName</td>
+                        <td>@item.LoanCount</td>
+                    </tr>
+                }
+                @if (!Model.TopEquipmentTypes.Any())
+                {
+                    <tr>
+                        <td colspan="2" class="text-center">...</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 3: Inventory Summary -->
+    <div class="mb-5">
+        <h4 class="mb-3">Inventory Summary</h4>
+        <table class="table table-bordered" style="max-width: 600px;">
+            <thead class="table-light">
+                <tr>
+                    <th>TypeName</th>
+                    <th>TotalItems</th>
+                    <th>TotalInStock</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.InventorySummary)
+                {
+                    <tr>
+                        <td>@item.TypeName</td>
+                        <td>@item.TotalItems</td>
+                        <td>@item.TotalInStock</td>
+                    </tr>
+                }
+                @if (!Model.InventorySummary.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="text-center">No data available</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <p class="text-center fw-bold">---- The End ----</p>
+
+    <a asp-page="/Equipment/Index" class="btn btn-secondary">Back to Equipment</a>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Simple Bar Chart for Loans by Month
+        const ctx = document.getElementById('monthChart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LoansByMonth.Select(x => x.Month))),
+                datasets: [{
+                    label: 'Total Loans',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LoansByMonth.Select(x => x.TotalLoans))),
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

@@ -12,6 +12,7 @@
             <a asp-page="/LoanPage/Index" class="btn btn-info btn-sm me-2">Loan Management</a>
             @if (Model.IsManager())
             {
+                <a asp-page="/ReportPage/Index" class="btn btn-warning btn-sm me-2">📊 Reports</a>
                 <a asp-page="/Equipment/Create" class="btn btn-success btn-sm me-2">Add New Equipment</a>
             }
             <a asp-page="/Authetication/Logout" class="btn btn-secondary btn-sm">Logout</a>

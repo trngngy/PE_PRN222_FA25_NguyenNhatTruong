@@ -21,7 +21,7 @@ namespace SportsLendDB_NguyenNhatTruong
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<EquipmentService>();
             builder.Services.AddScoped<LoanService>();
-
+            builder.Services.AddScoped<ReportService>();
             builder.Services.AddSignalR();
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
